@@ -21,6 +21,7 @@ from fastapi.responses import FileResponse, JSONResponse, Response
 import msm_protocol
 import msm_store
 import msm_handlers
+import msm_playerdata
 
 def same_name(path, name):
     return path.name.lower() == name.lower()
@@ -289,7 +290,7 @@ async def params(request):
     return _a
 
 def server_ip():
-    return '127.0.0.1'
+    return str(SETTINGS.get('resolved_server_ip') or SETTINGS.get('server_ip') or '127.0.0.1')
 
 def content_port():
     _b = SETTINGS.get('content_port')
@@ -704,10 +705,14 @@ async def sfs_websocket(websocket: WebSocket):
                 logger.info('%s failed: %s', _frame.command, _err)
                 continue
             for _resp_cmd, _resp_payload in _results:
+                if isinstance(_resp_payload, (dict, list)):
+                    msm_playerdata.coerce_wire_types(_resp_payload)
                 await websocket.send_bytes(msm_protocol.build_raw_frame(_resp_cmd, _resp_payload))
                 logger.info('%s -> %s payload=%.800r', _frame.command, _resp_cmd, _resp_payload)
             if _frame.command == 'USER_LOGIN':
                 for _boot_cmd, _boot_payload in msm_handlers.login_bootstrap_frames():
+                    if isinstance(_boot_payload, (dict, list)):
+                        msm_playerdata.coerce_wire_types(_boot_payload)
                     await websocket.send_bytes(msm_protocol.build_raw_frame(_boot_cmd, _boot_payload))
                     logger.info('login -> %s', _boot_cmd)
     except WebSocketDisconnect:

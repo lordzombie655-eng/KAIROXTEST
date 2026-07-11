@@ -361,6 +361,8 @@ def resolve_island_type(island_id):
     if entry and entry.get("island_type") is not None:
         return entry["island_type"]
     return island_id
+def is_valid_island_id(island_id):
+    return island_id in _island_catalog()
 def island_for_theme(theme_id):
     for theme in _island_theme_defs():
         if theme.get("theme_id") == theme_id:

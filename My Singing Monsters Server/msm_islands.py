@@ -1,7 +1,7 @@
 import random
 import time
 from msm_gamedata import (
-    get_max_structure_id, get_structure_definition, island_for_theme, resolve_island_type,
+    get_max_structure_id, get_structure_definition, is_valid_island_id, island_for_theme, resolve_island_type,
 )
 from msm_playerdata import (
     SFSLong, add_actual_currencies, create_player_properties, find_island,
@@ -72,11 +72,20 @@ def default_island_structures(user_island_id, island_type):
             level = 1
         structures.append(_make_structure(user_island_id, island_type, structure_id, pos_x, pos_y, 0, level, now))
     return structures
+def _resolve_catalog_id(island, fallback):
+    existing = island.get("island")
+    if isinstance(existing, int) and is_valid_island_id(existing):
+        return existing
+    mirror_of = island.get("mirror_of_island_id")
+    if isinstance(mirror_of, int) and is_valid_island_id(mirror_of):
+        return mirror_of
+    return fallback
 def backfill_island_type(island):
     user_island_id = island.get("user_island_id", 0) or 0
     if user_island_id < 1000 or user_island_id >= 100000000:
         return
-    catalog_id = island.get("mirror_of_island_id") or (user_island_id - 1000)
+    fallback = island.get("mirror_of_island_id") or (user_island_id - 1000)
+    catalog_id = _resolve_catalog_id(island, fallback)
     resolved = resolve_island_type(catalog_id)
     island.pop("mirror_of_island_id", None)
     island.pop("island_id", None)
@@ -94,15 +103,14 @@ def migrate_legacy_mirror_ids(player_object):
         if not (1100 <= old_uid < 2000):
             continue
         legacy_island_id = old_uid - 1000
-        if island.get("island") == legacy_island_id and not island.get("mirror_of_island_id"):
-            continue
+        fallback = island.get("mirror_of_island_id") or legacy_island_id
+        catalog_id = _resolve_catalog_id(island, fallback)
         new_uid = random.randint(100000000, 999999999)
         while new_uid in existing_ids:
             new_uid = random.randint(100000000, 999999999)
         existing_ids.discard(old_uid)
         existing_ids.add(new_uid)
         island["user_island_id"] = new_uid
-        catalog_id = island.get("mirror_of_island_id") or legacy_island_id
         island.pop("mirror_of_island_id", None)
         island.pop("island_id", None)
         island["island"] = catalog_id

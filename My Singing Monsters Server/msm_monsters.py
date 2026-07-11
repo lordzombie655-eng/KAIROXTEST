@@ -1,6 +1,6 @@
 import random
 import time
-from msm_box import build_placeholder_box_monster, is_box_monster_entity, requires_direct_placement
+from msm_box import build_placeholder_box_monster, is_box_monster_entity, requires_direct_placement, requires_direct_placement_on_purchase
 from msm_gamedata import (
     build_paironormal_modes, choose_breeding_result_monster, compute_monster_economy,
     get_max_monster_level, get_monster_definition, get_monster_level_definition, get_structure_definition,
@@ -577,7 +577,7 @@ def buy_egg(username, params):
         if resolved != monster_id:
             monster_id = resolved
 
-    if requires_direct_placement(get_monster_definition(monster_id), island_type):
+    if requires_direct_placement_on_purchase(get_monster_definition(monster_id), island_type):
         island_uid = island.get("user_island_id", 1000 + island_type)
         now = int(time.time() * 1000)
         build_ms = int((get_monster_definition(monster_id) or {}).get("build_time", 0) or 0) * 1000

@@ -1,6 +1,12 @@
 import time
 from msm_playerdata import SFSLong, create_player_properties, find_island_by_structure, load_player, save_player
 from msm_structures import _structure_update
+def repair_glitched_synthesis(island):
+    synthesizing = island.get("synthesizing")
+    if not synthesizing:
+        return
+    valid_ids = {s.get("structure", s.get("structure_id")) for s in (island.get("structures") or []) if s}
+    island["synthesizing"] = [s for s in synthesizing if s and s.get("structure") in valid_ids]
 _WORKSHOP_MONSTER_FOR_GENES = {
     "GJK": 682, "GJM": 683, "GKM": 684, "GJL": 685, "GKL": 686, "GLM": 736,
     "JKL": 737, "JKM": 757, "JLM": 777, "KLM": 796, "GJKL": 708, "GJKM": 758,

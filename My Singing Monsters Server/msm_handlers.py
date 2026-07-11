@@ -47,6 +47,8 @@ def handle_gs_player(username, params):
         msm_monsters.backfill_titansoul_state(island)
         msm_structures.backfill_awakener_structures(island)
         msm_islands.backfill_island_type(island)
+        msm_box.repair_broken_box_eggs(island)
+        msm_synthesis.repair_glitched_synthesis(island)
     msm_islands.migrate_legacy_mirror_ids(player_object)
     save_user_data(username, root)
     return {"player_object": coerce_wire_types(player_object)}

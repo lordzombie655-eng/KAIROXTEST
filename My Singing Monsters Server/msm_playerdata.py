@@ -9,8 +9,20 @@ _WIRE_LONG_KEYS = {
     "last_user_island_id", "last_collection", "last_collected", "last_fed", "date_created",
     "building_completed", "obj_end", "finishing_time", "complete_on", "seconds_remaining",
     "time_remaining", "started_at", "finished_at", "user", "chief", "last_login", "hatches_on", "laid_on",
+    "bakery", "bbb_id", "c", "clubbox_tokens", "clubbox_tokens_actual", "coins_actual",
+    "currencyScratchTime", "diamonds_actual", "egg_wildcards", "egg_wildcards_actual", "end_date",
+    "entity_id", "ethereal_currency_actual", "event_start_time", "flipGameTime", "food_actual",
+    "friend_gift", "keys", "keys_actual", "last_collect_all", "last_fb_post_reward", "last_feeding",
+    "last_speed_up", "last_speed_up_breeding", "last_speed_up_nursery", "monsterScratchTime",
+    "nextDailyLogin", "next_collect", "next_relic_reset", "prev_rank", "recipient_bbbid", "relics",
+    "relics_actual", "s", "schedule_started_on", "seed", "speed_up_credit", "starpower",
+    "starpower_actual", "start_date", "started_on", "time_of_next_gift", "total_starpower_collected",
+    "user_achievement_id", "user_monster_1", "user_monster_2", "user_structure", "user_torch_id",
+    "user_track_id",
 }
-_WIRE_FLOAT_KEYS = {"scale", "volume", "warp_speed"}
+_WIRE_FLOAT_KEYS = {
+    "scale", "volume", "warp_speed", "coin_production_mod", "nursery_speed_mod", "total_points",
+}
 
 
 def coerce_wire_types(value):

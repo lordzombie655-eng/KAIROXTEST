@@ -12,6 +12,19 @@ def is_box_monster_entity(definition):
     return bool(definition) and (definition.get("entity_type") or "").lower() == "box_monster"
 
 
+def repair_broken_box_eggs(island):
+    eggs = island.get("eggs")
+    if not eggs:
+        return
+    def _is_broken(egg):
+        if not egg:
+            return False
+        structure = egg.get("structure", 0) or 0
+        monster = egg.get("monster")
+        return structure == 0 and monster is not None and egg.get("user_egg_id") == monster
+    island["eggs"] = [egg for egg in eggs if not _is_broken(egg)]
+
+
 def is_special_box_placement_island(island_type):
     return island_type in SPECIAL_BOX_PLACEMENT_ISLANDS
 
@@ -23,10 +36,14 @@ def is_direct_box_placement_id(requested_id, island_type):
 
 
 _DIRECT_PLACEMENT_CLASSES = ("CLASS_DIPSTER",)
-def requires_direct_placement(definition, island_type):
+def requires_direct_placement_on_purchase(definition, island_type):
     if island_type in (10, 11, 12, 22):
         return True
-    if definition and definition.get("class") in _DIRECT_PLACEMENT_CLASSES:
+    return bool(definition and definition.get("class") in _DIRECT_PLACEMENT_CLASSES)
+
+
+def requires_direct_placement(definition, island_type):
+    if requires_direct_placement_on_purchase(definition, island_type):
         return True
     return bool(definition) and is_box_monster_entity(definition)
 
