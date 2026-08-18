@@ -1,1 +1,1 @@
-web: python server.py
+web: python "My Singing Monsters Server/msm_handlers.py"
